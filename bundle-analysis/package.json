@@ -1,0 +1,11 @@
+{
+  "name": "bundle-analysis",
+  "version": "1.0.0",
+  "main": "analyse.sh",
+  "author": "Viktor Varland",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "webpack-bundle-analyzer": "^2.13.1"
+  }
+}
