@@ -26,6 +26,7 @@ fi
 core="git@github.com:dhis2/dhis2-core.git"
 
 apps=(
+    "git@github.com:dhis2/core-resource-app.git"
     "git@github.com:dhis2/translations-app.git"
     "git@github.com:dhis2/maintenance-app.git"
     "git@github.com:dhis2/app-management-app.git"
@@ -55,6 +56,7 @@ apps=(
     "git@github.com:dhis2/d2-i18n-monitor.git"
 )
 libs=(
+    "git@github.com:dhis2/deploy-build.git"
     "git@github.com:dhis2/code-style.git"
     "git@github.com:dhis2/d2.git"
     "git@github.com:dhis2/d2-i18n.git"
