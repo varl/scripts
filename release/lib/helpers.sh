@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 function app_name {
     local repo=$1
     local name=$(echo "${repo}" | sed -n "s/^.*dhis2\/\(.*\)\.git$/\1/p")

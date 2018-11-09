@@ -11,9 +11,15 @@ fi
 shopt -s nullglob globstar
 ### init bash end
 
-appdir="./apps"
-libdir="./libs"
-coredir="./core"
+if [[ $# -gt 0 ]]; then
+    ROOT="$1"
+else
+    ROOT="."
+fi
+
+appdir="${ROOT}/apps"
+libdir="${ROOT}/libs"
+coredir="${ROOT}/core"
 
 if [ ! -d "$appdir" ]; then
 	mkdir "$appdir"
@@ -48,6 +54,7 @@ apps=(
     "git@github.com:dhis2/scheduler-app.git"
     "git@github.com:dhis2/data-quality-app.git"
     "git@github.com:dhis2/data-administration-app.git"
+    "git@github.com:dhis2/data-visualizer-app.git"
     "git@github.com:dhis2/user-app.git"
     "git@github.com:dhis2/messaging-app.git"
     "git@github.com:dhis2/import-export-app.git"

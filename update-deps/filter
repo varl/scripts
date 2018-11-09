@@ -1,5 +1,5 @@
 (
 .version |= "0.0.0-PLACEHOLDER"|
-if has("dependencies") then .dependencies |= (.|with_entries(if .key|startswith("@dhis2/d2-ui-") then .value |= "latest" else .  end)) else . end|
-if has("peerDependencies") then .peerDependencies |= (.|with_entries(if .key|startswith("@dhis2/d2-ui-") then .value |= "latest" else .  end)) else . end
+if has("dependencies") then .dependencies |= (.|with_entries(if .key|startswith("@dhis2/d2-ui-") then .value |= "0.0.0-PLACEHOLDER" else .  end)) else . end|
+if has("peerDependencies") then .peerDependencies |= (.|with_entries(if .key|startswith("@dhis2/d2-ui-") then .value |= "0.0.0-PLACEHOLDER" else .  end)) else . end
 )

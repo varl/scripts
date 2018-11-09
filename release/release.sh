@@ -43,14 +43,6 @@ readonly SUFFIX=${2:-}
 
 
 
-#
-## globals
-#
-
-
-
-
-
 
 #
 ## repos
@@ -121,13 +113,13 @@ function release_apps {
 
     for app in "${app_repos[@]}"
     do
-        local path="${TEMP}/${name}"
         local name=$(app_name "$app")
+        local path="${TEMP}/${name}"
 
         pushd "$path"
         create_branch "$branch"
         git checkout "$branch"
-        create_tag "$branch" "$tag"
+        create_tag "$tag"
 
         push "$branch"
         push "$tag"
@@ -137,10 +129,10 @@ function release_apps {
 
 function release_core {
     local name=$(app_name "$core_repo")
-    local path="${TEMP}/${path}"
+    local path="${TEMP}/${name}"
     local branch="$REL_VERSION"
     local tag=$(app_tag_name)
-    local pkg_path="${path}/dhis-2/dhis-web/dhis-web-apps"
+    local pkg_path="./dhis-2/dhis-web/dhis-web-apps"
     local app_branch=$(app_branch_name)
 
     pushd "$path"
@@ -150,30 +142,42 @@ function release_core {
     git checkout "$branch"
 
     # updates all app version refs to tag
-
-    # todo: handle when versions have a # already
-    jq "(
-        .dependencies |= (.|with_entries(
-        if .key|endswith(\"-app\")
-        then .value |= .+\"#${tag}\"
-        else . end))
-    )$" "${pkg_path}/package.json" > "${pkg_path}/package.json.mod"
+	jq --exit-status "(.dependencies |= (
+		.|with_entries(
+			if .key|endswith(\"-app\") then
+				.value |=
+					if .|contains(\"#\") then
+						.|sub(\"#.*$\"; \"#${tag}\")
+					else
+						.+\"#${tag}\"
+					end
+			else
+				.
+			end
+		)
+	))" "${pkg_path}/package.json" > "${pkg_path}/package.json.mod"
     mv "${pkg_path}/package.json.mod" "${pkg_path}/package.json"
 
     # commits and tags
     git add "${pkg_path}/package.json"
     git commit -m "chore: lock app versions to tag ${tag}"
-    git tag "$tag"
+    create_tag "$tag"
 
     # updates all app version refs to release branch
-
-    # todo: handle when versions should be reset to #v31
-    jq "(
-        .dependencies |= (.|with_entries(
-        if .key|endswith(\"-app\")
-        then .value |= .+\"#${app_branch}\"
-        else . end))
-    )$" "${pkg_path}/package.json" > "${pkg_path}/package.json.mod"
+	jq --exit-status "(.dependencies |= (
+		.|with_entries(
+			if .key|endswith(\"-app\") then
+				.value |=
+					if .|contains(\"#\") then
+						.|sub(\"#.*$\"; \"#${app_branch}\")
+					else
+						.+\"#${app_branch}\"
+					end
+			else
+				.
+			end
+		)
+	))" "${pkg_path}/package.json" > "${pkg_path}/package.json.mod"
     mv "${pkg_path}/package.json.mod" "${pkg_path}/package.json"
 
     # commits to release branch
@@ -182,6 +186,7 @@ function release_core {
 
     push "$tag"
     push "$branch"
+
     popd
 }
 
