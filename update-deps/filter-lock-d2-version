@@ -1,0 +1,3 @@
+(
+if has("dependencies") then .dependencies |= (.|with_entries(if .key=="d2" then .value |= "~31.1" else . end)) else . end
+)
