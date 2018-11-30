@@ -7,6 +7,13 @@ function app_name {
     echo "$name"
 }
 
+function checkout {
+    local branch=$1
+    git checkout "$branch"
+    git fetch origin "$branch"
+    git merge
+}
+
 function clone {
     local repo=$1
     local path=$2
@@ -20,13 +27,12 @@ function clone {
 
         # remove local tags and get remote
         local pruned_tags=$(git tag -l | xargs git tag -d)
-        git fetch --tags
 
         # remove local branches
         local pruned_branches=$(git branch | grep -v "master" | xargs git branch -D)
 
         # update master
-        git fetch origin master
+        git fetch origin
         git merge
         popd
     fi
@@ -34,7 +40,7 @@ function clone {
 
 function create_branch {
     local branch=$1
-    local out=$(git rev-parse --verify "$branch" 2>&1)
+    local out=$(git rev-parse --verify "origin/${branch}" 2>&1)
 
     if [[ "$out" == fatal* ]]; then
         echo "creating branch: ${branch}"

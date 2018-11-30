@@ -127,7 +127,7 @@ function release_apps {
 
         pushd "$path"
         create_branch "$branch"
-        git checkout "$branch"
+        checkout "$branch"
         create_tag "$tag"
 
         push "$branch"
@@ -148,7 +148,7 @@ function release_core {
 
     # creates release branch for The Core
     create_branch "$branch"
-    git checkout "$branch"
+    checkout "$branch"
 
     # updates all app version refs to tag
 	jq --exit-status "(. |= (
