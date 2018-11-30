@@ -57,6 +57,7 @@ readonly app_repos=(
     "git@github.com:dhis2/core-resource-app.git"
     "git@github.com:dhis2/dashboards-app.git"
     "git@github.com:dhis2/data-administration-app.git"
+    "git@github.com:dhis2/data-visualizer-app.git"
     "git@github.com:dhis2/data-quality-app.git"
     "git@github.com:dhis2/datastore-app.git"
     "git@github.com:dhis2/dhis2-usage-analytics.git"
@@ -90,7 +91,10 @@ readonly app_repos=(
 function app_tag_name {
     # turns 2.31 and rc1 into `2.31-rc1`
 
-    local TAG="${REL_VERSION}-${SUFFIX}"
+    local TAG="${REL_VERSION}"
+    if [[ -n ${SUFFIX} ]]; then
+        TAG="${TAG}-${SUFFIX}"
+    fi
     echo "$TAG"
 }
 
@@ -100,6 +104,13 @@ function app_branch_name {
     local RHS=${REL_VERSION#*.}
     local LHS=${RHS%%.*}
     echo "v${LHS}"
+}
+
+function core_branch_name {
+    local LHS=${REL_VERSION%%.*}
+    local RHS=${REL_VERSION#*.}
+    RHS=${RHS%%.*}
+    echo "${LHS}.${RHS}"
 }
 
 function release_apps {
@@ -128,7 +139,7 @@ function release_apps {
 function release_core {
     local name=$(app_name "$core_repo")
     local path="${TEMP}/${name}"
-    local branch="$REL_VERSION"
+    local branch="$(core_branch_name)"
     local tag=$(app_tag_name)
     local pkg_path="./dhis-2/dhis-web/dhis-web-apps"
     local app_branch=$(app_branch_name)
@@ -140,46 +151,38 @@ function release_core {
     git checkout "$branch"
 
     # updates all app version refs to tag
-	jq --exit-status "(.dependencies |= (
-		.|with_entries(
-			if .key|endswith(\"-app\") then
-				.value |=
-					if .|contains(\"#\") then
-						.|sub(\"#.*$\"; \"#${tag}\")
-					else
-						.+\"#${tag}\"
-					end
-			else
-				.
-			end
+	jq --exit-status "(. |= (
+		.|map(
+            . |=
+                if .|contains(\"#\") then
+                    .|sub(\"#.*$\"; \"#${tag}\")
+                else
+                    .+\"#${tag}\"
+                end
 		)
-	))" "${pkg_path}/package.json" > "${pkg_path}/package.json.mod"
-    mv "${pkg_path}/package.json.mod" "${pkg_path}/package.json"
+	))" "${pkg_path}/apps-to-bundle.json" > "${pkg_path}/apps-to-bundle.json.mod"
+    mv "${pkg_path}/apps-to-bundle.json.mod" "${pkg_path}/apps-to-bundle.json"
 
     # commits and tags
-    git add "${pkg_path}/package.json"
+    git add "${pkg_path}/apps-to-bundle.json"
     git commit -m "chore: lock app versions to tag ${tag}"
     create_tag "$tag"
 
     # updates all app version refs to release branch
-	jq --exit-status "(.dependencies |= (
-		.|with_entries(
-			if .key|endswith(\"-app\") then
-				.value |=
-					if .|contains(\"#\") then
-						.|sub(\"#.*$\"; \"#${app_branch}\")
-					else
-						.+\"#${app_branch}\"
-					end
-			else
-				.
-			end
+	jq --exit-status "(.|= (
+		.|map(
+            . |=
+                if .|contains(\"#\") then
+                    .|sub(\"#.*$\"; \"#${app_branch}\")
+                else
+                    .+\"#${app_branch}\"
+                end
 		)
-	))" "${pkg_path}/package.json" > "${pkg_path}/package.json.mod"
-    mv "${pkg_path}/package.json.mod" "${pkg_path}/package.json"
+	))" "${pkg_path}/apps-to-bundle.json" > "${pkg_path}/apps-to-bundle.json.mod"
+    mv "${pkg_path}/apps-to-bundle.json.mod" "${pkg_path}/apps-to-bundle.json"
 
     # commits to release branch
-    git add "${pkg_path}/package.json"
+    git add "${pkg_path}/apps-to-bundle.json"
     git commit -m "chore: set apps to track branch ${app_branch}"
 
     push "$tag"
