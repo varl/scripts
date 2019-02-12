@@ -15,7 +15,7 @@ shopt -s nullglob globstar
 
 
 
-# figure out cwd
+# figure out script path
 readonly DIR=$(dirname $0)
 readonly ROOT=$(cd "${DIR}" && pwd)
 
@@ -38,11 +38,11 @@ appdir="${BASE}/apps"
 libdir="${BASE}/libs"
 
 if [ ! -d "$appdir" ]; then
-	mkdir "$appdir"
+    mkdir "$appdir"
 fi
 
 if [ ! -d "$libdir" ]; then
-	mkdir "$libdir"
+    mkdir "$libdir"
 fi
 
 
@@ -52,13 +52,13 @@ fi
 for app in "${apps[@]}"
 do
     name=$(app_name "$app")
-	clone ${app} "${appdir}/${name}"
+    clone ${app} "${appdir}/${name}"
 done
 
 for lib in "${libs[@]}"
 do
     name=$(app_name "$lib")
-	clone ${lib} "${libdir}/${name}"
+    clone ${lib} "${libdir}/${name}"
 done
 
 clone ${core} ${coredir}
