@@ -44,6 +44,7 @@ libs=(
     "git@github.com:dhis2/ui.git"
 )
 docs=(
+    "git@github.com:dhis2/notes.git"
     "git@github.com:dhis2/dhis2.github.io.git"
     "git@github.com:dhis2/dhis2-docs.git"
     "git@github.com:dhis2/dhis2-releases.git"

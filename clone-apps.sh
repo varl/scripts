@@ -36,6 +36,7 @@ graveyarddir="${BASE}/graveyard"
 
 appdir="${BASE}/apps"
 libdir="${BASE}/libs"
+docdir="${BASE}/docs"
 
 if [ ! -d "$appdir" ]; then
     mkdir "$appdir"
@@ -43,6 +44,10 @@ fi
 
 if [ ! -d "$libdir" ]; then
     mkdir "$libdir"
+fi
+
+if [ ! -d "$docdir" ]; then
+    mkdir "$docdir"
 fi
 
 
@@ -59,6 +64,12 @@ for lib in "${libs[@]}"
 do
     name=$(app_name "$lib")
     clone ${lib} "${libdir}/${name}"
+done
+
+for doc in "${docs[@]}"
+do
+    name=$(app_name "$doc")
+    clone ${doc} "${docdir}/${name}"
 done
 
 clone ${core} ${coredir}
