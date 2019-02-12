@@ -15,9 +15,13 @@ shopt -s nullglob globstar
 
 
 
+# figure out cwd
+readonly DIR=$(dirname $0)
+readonly ROOT=$(cd "${DIR}" && pwd)
+
 # contains the $apps, $libs, $core definitions
-source ./lib/git.sh
-source ./apps.sh
+source "${ROOT}/lib/git.sh"
+source "${ROOT}/apps.sh"
 
 
 
