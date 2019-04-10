@@ -10,8 +10,8 @@ function app_name {
 function checkout {
     local branch=$1
     git checkout "$branch"
-    git fetch origin "$branch"
-    git merge
+    # git fetch origin "$branch"
+    # git merge
 }
 
 function clone {
@@ -39,14 +39,15 @@ function clone {
 }
 
 function create_branch {
+    # this should only return some output if a new branch is created
     local branch=$1
     local out=$(git rev-parse --verify "origin/${branch}" 2>&1)
 
     if [[ "$out" == fatal* ]]; then
         echo "creating branch: ${branch}"
         git branch "$branch"
-    else
-        echo "existing branch: ${branch}"
+    # else
+    #     echo "existing branch: ${branch}"
     fi
 }
 
@@ -66,4 +67,10 @@ function push {
     local refspec=$1
 
     git push origin "$refspec"
+}
+
+
+function unregex {
+   # http://stackoverflow.com/a/2705678/120999
+   sed -e 's/[]\/()$*.^|[]/\\&/g' <<< "$1"
 }
