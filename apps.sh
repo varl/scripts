@@ -23,6 +23,7 @@ apps=(
     "git@github.com:dhis2/datastore-app.git"
     "git@github.com:dhis2/scheduler-app.git"
     "git@github.com:dhis2/data-quality-app.git"
+    "git@github.com:dhis2/data-visualizer-app.git"
     "git@github.com:dhis2/data-administration-app.git"
     "git@github.com:dhis2/user-app.git"
     "git@github.com:dhis2/messaging-app.git"
