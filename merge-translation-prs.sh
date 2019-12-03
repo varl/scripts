@@ -54,6 +54,7 @@ EOF
             res=$(hub api --method PUT "repos/{owner}/{repo}/pulls/${pr_id}/merge" --input "$body")
             echo "Merged: ${pr_id} ${pr_title}"
             rm "$body"
+            sleep 1
         fi
     done
 }
